@@ -1,55 +1,279 @@
-# Shipping Cost Prediction  
-**By Akshat Garg**  
+🚚 Shipping Cost Prediction System
 
-Accurately forecasting logistics expenses is a cornerstone of financial planning for any business involved in shipping goods. This project addresses the critical task of predicting shipping costs by leveraging machine learning to analyze various factors that influence freight charges. By creating a reliable predictive model, businesses can optimize their supply chain, offer competitive pricing, and improve budget accuracy.
+An end-to-end Machine Learning application designed to predict shipping costs dynamically using advanced regression models like XGBoost and CatBoost.
 
-Python libraries like **Pandas**, **NumPy**, **Scikit-learn**, and **XGBoost** are employed to process the data, train the model, and evaluate its performance in predicting shipping costs.
+This project replaces traditional static pricing formulas with a data-driven system capable of handling complex, non-linear relationships between shipment features and cost.
 
----
+📌 Project Overview
 
-## Dataset Description  
+Shipping pricing is often calculated using fixed formulas that fail to capture real-world complexity.
 
-The dataset for this project contains transactional data for various shipments, detailing the key attributes associated with each freight movement. The primary data is stored in `shipment.csv`.  
+This system solves that problem using machine learning.
 
-| Column Name           | Description |
-|-----------------------|-------------|
-| **Country**           | Destination country of the shipment. |
-| **Shipment Mode**     | The method of transportation (e.g., "Air", "Ocean"). |
-| **Manufacturing Site**| The location where the product was made. |
-| **Weight (Kilograms)**| The gross weight of the shipment. |
-| **Line Item Value**   | The total value of the items in the shipment. |
-| **Pack Price**        | The price per pack of the item. |
-| **Unit Price**        | The price per unit of the item. |
-| **Freight Cost (USD)**| **Target variable** – total cost of the shipment in USD. |
+It takes input features such as:
 
----
+Weight
 
-## Model Selection  
+Height
 
-To achieve the highest accuracy in predicting shipping costs, the **XGBoost Regressor** was selected as the final model.  
-XGBoost (Extreme Gradient Boosting) is a powerful and efficient implementation of the gradient boosting framework. It excels at handling complex, non-linear relationships in tabular data and consistently delivers high performance through its optimized tree-based learning algorithm.
+Width
 
-**Other models tested:**  
-- Linear Regression  
-- Random Forest Regressor  
-- Support Vector Regressor (SVR)  
-- Neural Network  
+Artist
 
----
+Material
 
-## Model Performance (R² Score)  
+Transport Type
 
-| Model                        | R² Score |
-|------------------------------|----------|
-| Linear Regression            | 0.78     |
-| Support Vector Regressor     | 0.84     |
-| Random Forest Regressor      | 0.89     |
-| Neural Network (Keras)       | 0.87     |
-| **XGBoost Regressor**        | **0.94** |
+And predicts the final shipping cost.
 
----
+🎯 Goal
 
-## Why the Model is Not Overfitting  
+To improve pricing accuracy using powerful gradient boosting models trained on structured data.
 
-- **Cross-Validated R²:** The model achieved a consistent cross-validated R² score of **0.92**, indicating stable performance across different subsets of the data.  
-- **Residuals Plot:** The residuals (differences between predicted and actual values) show a random pattern centered around zero. This confirms that the model's errors are random and not systematic — a key indicator of a well-fitted model.
+🧠 Key Features
+
+Automated Data Pipeline (MongoDB → Model)
+
+Data validation and drift detection
+
+Feature transformation and preprocessing
+
+Model training with XGBoost & CatBoost
+
+Model comparison and best-model selection
+
+FastAPI backend for serving predictions
+
+Simple HTML/JS frontend for user interaction
+
+Cloud-ready deployment using Docker & AWS S3
+
+🏗️ System Architecture
+1️⃣ Training Workflow
+
+Data pulled from MongoDB
+
+Schema validation and drift detection
+
+Data cleaning and transformation
+
+Model training (XGBoost / CatBoost)
+
+Model evaluation using RMSE / MAE
+
+Best model saved and deployed
+
+Final artifacts:
+
+shipping_preprocessor.pkl
+
+shipping_price_model.pkl
+
+2️⃣ Prediction Workflow
+
+User fills form in UI
+
+JavaScript sends JSON request to FastAPI
+
+FastAPI loads preprocessor and trained model
+
+Input data is transformed
+
+Model predicts shipping cost
+
+Prediction returned to user
+
+🛠️ Tech Stack
+Language
+
+Python 3.8+
+
+Backend
+
+FastAPI
+
+Uvicorn
+
+Database
+
+MongoDB (via PyMongo)
+
+Machine Learning
+
+XGBoost
+
+CatBoost
+
+Scikit-learn
+
+Data Processing
+
+Pandas
+
+NumPy
+
+Model Monitoring
+
+Evidently (Data Drift Detection)
+
+Cloud & Deployment
+
+Docker
+
+AWS S3 (via Boto3)
+
+Frontend
+
+HTML
+
+CSS
+
+JavaScript
+
+📂 Project Structure
+Shipping_cost_prediction/
+│
+├── shipment/
+│   ├── pipeline/
+│   │   └── training_pipeline.py
+│   ├── components/
+│   │   ├── data_ingestion.py
+│   │   ├── data_validation.py
+│   │   ├── data_transformation.py
+│   │   ├── model_trainer.py
+│   │   ├── model_evaluation.py
+│   │   ├── model_pusher.py
+│   │   └── model_predictor.py
+│
+├── app.py
+├── requirements.txt
+└── README.md
+
+🔍 Core Components Explained
+🔹 training_pipeline.py
+
+Orchestrates the entire ML workflow:
+Ingestion → Validation → Transformation → Training → Evaluation → Deployment.
+
+🔹 data_ingestion.py
+
+Connects to MongoDB and splits data into train/test sets.
+
+🔹 data_validation.py
+
+Ensures data schema consistency and checks for data drift.
+
+🔹 data_transformation.py
+
+Handles:
+
+Missing values
+
+Categorical encoding
+
+Feature scaling
+
+Saves preprocessor.pkl
+
+🔹 model_trainer.py
+
+Trains XGBoost and CatBoost models and selects the best performer.
+
+🔹 model_evaluation.py
+
+Compares the new model with the currently deployed model.
+
+🔹 model_pusher.py
+
+Pushes the better-performing model to deployment directory or S3.
+
+🔹 model_predictor.py
+
+Used during inference to load model and generate predictions.
+
+⚙️ Installation
+1️⃣ Clone the repository
+git clone https://github.com/Rmangal37/Shipping_cost_prediction.git
+cd Shipping_cost_prediction
+
+2️⃣ Create Virtual Environment
+python -m venv venv
+venv\Scripts\activate
+
+
+Mac/Linux:
+
+source venv/bin/activate
+
+3️⃣ Install Dependencies
+pip install -r requirements.txt
+
+▶️ Running the Application
+Start FastAPI Server
+uvicorn app:app --reload
+
+
+Visit:
+
+http://127.0.0.1:8000
+
+Trigger Training Manually
+GET /train
+
+Make Prediction
+POST /predict
+
+
+Submit form data to receive shipping cost prediction.
+
+📊 Machine Learning Approach
+
+This is a Regression Problem because the target variable (Shipping Cost) is continuous.
+
+Why XGBoost / CatBoost?
+
+Excellent performance on tabular data
+
+Handles non-linear feature interactions
+
+Strong regularization
+
+Efficient training
+
+Models are evaluated using:
+
+RMSE
+
+MAE
+
+Best model is automatically selected.
+
+🚀 Future Improvements
+
+CI/CD pipeline integration
+
+Automated retraining schedule
+
+Real-time data monitoring dashboard
+
+Deployment on AWS EC2 or Kubernetes
+
+Add pricing explainability (SHAP values)
+
+🎯 Use Cases
+
+Logistics companies
+
+E-commerce platforms
+
+Shipping marketplaces
+
+Dynamic pricing systems
+
+👨‍💻 Author
+
+Ruchir Mangal
+Computer Engineering Student | Machine Learning Enthusiast
+
+GitHub:
+https://github.com/Rmangal37
