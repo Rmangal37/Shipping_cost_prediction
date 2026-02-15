@@ -1,34 +1,31 @@
 🚚 Shipping Cost Prediction System
 
-An end-to-end Machine Learning application designed to predict shipping costs dynamically using advanced regression models like XGBoost and CatBoost.
+An end-to-end Machine Learning application that predicts shipping costs dynamically using advanced regression models like XGBoost and CatBoost.
 
-This project replaces traditional static pricing formulas with a data-driven system capable of handling complex, non-linear relationships between shipment features and cost.
+This project replaces traditional static pricing formulas with a data-driven system capable of handling complex, non-linear relationships between shipment features and cost.  
+
 
 📌 Project Overview
 
-Shipping pricing is often calculated using fixed formulas that fail to capture real-world complexity.
+Shipping cost calculation in many systems relies on fixed formulas. These often fail to capture real-world complexity such as material type, artist category, transport type, and feature interactions.
 
-This system solves that problem using machine learning.
+This system uses machine learning to provide more accurate and scalable pricing.  
 
-It takes input features such as:
 
-Weight
 
-Height
+🎯 Objective
 
-Width
+To build a production-style ML pipeline that:
 
-Artist
+Automates data ingestion and validation
 
-Material
+Trains multiple models
 
-Transport Type
+Selects the best-performing model
 
-And predicts the final shipping cost.
+Serves predictions via a FastAPI backend
 
-🎯 Goal
-
-To improve pricing accuracy using powerful gradient boosting models trained on structured data.
+Provides a simple frontend for users
 
 🧠 Key Features
 
@@ -40,48 +37,74 @@ Feature transformation and preprocessing
 
 Model training with XGBoost & CatBoost
 
-Model comparison and best-model selection
+Model comparison and automatic best-model selection
 
 FastAPI backend for serving predictions
 
-Simple HTML/JS frontend for user interaction
+Simple HTML/JS frontend for end-users
 
-Cloud-ready deployment using Docker & AWS S3
+Docker and AWS S3 ready deployment
 
 🏗️ System Architecture
-1️⃣ Training Workflow
+🔹 High-Level Architecture Diagram
+flowchart TD
 
-Data pulled from MongoDB
+%% ================= TRAINING PIPELINE =================
+subgraph Training_Pipeline
 
-Schema validation and drift detection
+A[MongoDB Database] --> B[Data Ingestion]
+B --> C[Data Validation<br/>Schema Check + Data Drift]
+C --> D[Data Transformation<br/>Encoding + Scaling]
+D --> E[Model Trainer<br/>XGBoost / CatBoost]
+E --> F[Model Evaluation<br/>RMSE / MAE]
+F --> G[Model Pusher<br/>Save Best Model<br/>Local / AWS S3]
 
-Data cleaning and transformation
+end
 
-Model training (XGBoost / CatBoost)
+%% ================= DEPLOYMENT FLOW =================
+subgraph Deployment_Pipeline
 
-Model evaluation using RMSE / MAE
+U[User - Web UI] --> H[HTML / CSS / JavaScript]
+H --> I[FastAPI Backend<br/>app.py]
+I --> J[Model Predictor]
+J --> K[Load Preprocessor + Model]
+K --> L[Predict Shipping Cost]
+L --> U
 
-Best model saved and deployed
+end
 
-Final artifacts:
+🔍 Architecture Explanation
+🧠 Training Flow
 
-shipping_preprocessor.pkl
+Data is pulled from MongoDB.
 
-shipping_price_model.pkl
+Data validation ensures schema consistency and detects data drift.
 
-2️⃣ Prediction Workflow
+Data transformation handles:
 
-User fills form in UI
+Missing values
 
-JavaScript sends JSON request to FastAPI
+Categorical encoding
 
-FastAPI loads preprocessor and trained model
+Feature scaling
 
-Input data is transformed
+Models (XGBoost & CatBoost) are trained.
 
-Model predicts shipping cost
+Performance is evaluated using RMSE and MAE.
 
-Prediction returned to user
+The best-performing model is saved and pushed for deployment.
+
+🚀 Prediction Flow
+
+User enters shipment details in the web interface.
+
+FastAPI receives the request.
+
+The saved preprocessor transforms the input.
+
+The trained model predicts the shipping cost.
+
+The prediction is returned instantly to the user.
 
 🛠️ Tech Stack
 Language
@@ -112,11 +135,11 @@ Pandas
 
 NumPy
 
-Model Monitoring
+Monitoring
 
 Evidently (Data Drift Detection)
 
-Cloud & Deployment
+Cloud & Infrastructure
 
 Docker
 
@@ -131,6 +154,7 @@ CSS
 JavaScript
 
 📂 Project Structure
+```
 Shipping_cost_prediction/
 │
 ├── shipment/
@@ -148,117 +172,127 @@ Shipping_cost_prediction/
 ├── app.py
 ├── requirements.txt
 └── README.md
+```
 
-🔍 Core Components Explained
-🔹 training_pipeline.py
+🔎 Core Components Explained
+training_pipeline.py
 
-Orchestrates the entire ML workflow:
+Orchestrates the complete ML workflow:
 Ingestion → Validation → Transformation → Training → Evaluation → Deployment.
 
-🔹 data_ingestion.py
+data_ingestion.py
 
-Connects to MongoDB and splits data into train/test sets.
+Connects to MongoDB and splits data into train/test datasets.
 
-🔹 data_validation.py
+data_validation.py
 
-Ensures data schema consistency and checks for data drift.
+Checks schema consistency and monitors data drift.
 
-🔹 data_transformation.py
+data_transformation.py
 
-Handles:
+Cleans data
 
-Missing values
+Encodes categorical features
 
-Categorical encoding
-
-Feature scaling
+Scales numerical features
 
 Saves preprocessor.pkl
 
-🔹 model_trainer.py
+model_trainer.py
 
 Trains XGBoost and CatBoost models and selects the best performer.
 
-🔹 model_evaluation.py
+model_evaluation.py
 
-Compares the new model with the currently deployed model.
+Compares newly trained model with currently deployed model.
 
-🔹 model_pusher.py
+model_pusher.py
 
-Pushes the better-performing model to deployment directory or S3.
+Deploys the better-performing model to local storage or AWS S3.
 
-🔹 model_predictor.py
+model_predictor.py
 
-Used during inference to load model and generate predictions.
+Loads trained model and preprocessor during inference.
 
 ⚙️ Installation
 1️⃣ Clone the repository
+```
 git clone https://github.com/Rmangal37/Shipping_cost_prediction.git
 cd Shipping_cost_prediction
+```
 
 2️⃣ Create Virtual Environment
+
+Windows:
+```
 python -m venv venv
 venv\Scripts\activate
-
+```
 
 Mac/Linux:
-
+```
 source venv/bin/activate
+```
 
 3️⃣ Install Dependencies
+```
 pip install -r requirements.txt
+```
 
 ▶️ Running the Application
 Start FastAPI Server
+```
 uvicorn app:app --reload
+```
 
-
-Visit:
-
+Open in browser:
+```
 http://127.0.0.1:8000
-
-Trigger Training Manually
+```
+Trigger Training
 GET /train
 
 Make Prediction
 POST /predict
 
 
-Submit form data to receive shipping cost prediction.
+Submit form data to receive the predicted shipping cost.
+
+
 
 📊 Machine Learning Approach
 
-This is a Regression Problem because the target variable (Shipping Cost) is continuous.
+This is a Regression Problem because shipping cost is a continuous variable.
 
-Why XGBoost / CatBoost?
+Why XGBoost & CatBoost?
 
-Excellent performance on tabular data
+Strong performance on structured/tabular data
 
-Handles non-linear feature interactions
+Handles non-linear relationships well
 
-Strong regularization
+Built-in regularization
 
-Efficient training
+High accuracy and efficiency
 
 Models are evaluated using:
 
-RMSE
+RMSE (Root Mean Squared Error)
 
-MAE
+MAE (Mean Absolute Error)
 
-Best model is automatically selected.
+The best-performing model is automatically selected and deployed.
 
 🚀 Future Improvements
 
-CI/CD pipeline integration
+Automated retraining pipeline
 
-Automated retraining schedule
+CI/CD integration
 
-Real-time data monitoring dashboard
+Model explainability using SHAP
+
+Real-time monitoring dashboard
 
 Deployment on AWS EC2 or Kubernetes
-
-Add pricing explainability (SHAP values)
 
 🎯 Use Cases
 
@@ -266,9 +300,9 @@ Logistics companies
 
 E-commerce platforms
 
-Shipping marketplaces
+Dynamic pricing engines
 
-Dynamic pricing systems
+Shipping marketplaces
 
 👨‍💻 Author
 
